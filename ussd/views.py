@@ -17,9 +17,15 @@ def get_access_token():
         'password': PASSWORD,
         'client_id': 'ushahidiui',
         'client_secret': '35e7f0bca957836d05ca0492211b0ac707671261',
-        'scope': '*'
+        'scope': '*',
+        'grant_type': 'password'
     }
-    return requests.request('POST', AUTH_URL, data=json.dumps(payload))   
+    headers = {
+    'Content-Type': "application/json",
+    }
+    return requests.request('POST', AUTH_URL, data=json.dumps(payload), headers=headers)   
 
 def index(request):
-    return HttpResponse(get_access_token(), content_type='text/plain')
+    access_token = get_access_token()
+    ACCESS_TOKEN = access_token
+    return HttpResponse(ACCESS_TOKEN, content_type='text/plain')
