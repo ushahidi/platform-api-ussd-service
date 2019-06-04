@@ -13,8 +13,8 @@
 ```bash
 DATABASE_URL=postgres://postgres:password@localhost:5432/ussd
 PLATFORM_URL=https://ussd.ushahidi.io
-PLATFORM_URL=admin@ushahidi.com
-PLATFORM_URL=*************
+PLATFORM_EMAIL=admin@ushahidi.com
+PLATFORM_PASSWORD=*************
 ```
 - Install dependencies using: `pipenv install`
 - Migrate DB using: `python manage.py migrate`
