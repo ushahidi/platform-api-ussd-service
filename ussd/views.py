@@ -1,31 +1,35 @@
-import os
-import json
-import requests
-import urllib.parse
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
-PLATFORM_URL = os.environ.get('PLATFORM_URL', 'PLATFORM_URL NOT AVAILABLE')
-EMAIL = os.environ.get('PLATFORM_EMAIL', '')
-PASSWORD = os.environ.get('PLATFORM_PASSWORD', '')
-AUTH_URL = urllib.parse.urljoin(PLATFORM_URL, '/oauth/token/')
-ACCESS_TOKEN = None
+from .api import *
 
-def get_access_token():
-    payload = {
-        'username': EMAIL,
-        'password': PASSWORD,
-        'client_id': 'ushahidiui',
-        'client_secret': '35e7f0bca957836d05ca0492211b0ac707671261',
-        'scope': '*',
-        'grant_type': 'password'
-    }
-    headers = {
-    'Content-Type': "application/json",
-    }
-    return requests.request('POST', AUTH_URL, data=json.dumps(payload), headers=headers)   
-
+# Webhook Listener
+@csrf_exempt
 def index(request):
-    access_token = get_access_token()
-    ACCESS_TOKEN = access_token
-    return HttpResponse(ACCESS_TOKEN, content_type='text/plain')
+    if request.method == 'POST':
+        session_id = request.POST.get('sessionId')
+        service_code = request.POST.get('serviceCode')
+        phone_number = request.POST.get('phoneNumber')
+        text = request.POST.get('text')
+        usrInput = text.split('*')
+        step = len(usrInput)
+
+        response = ""
+
+        if step == 1:
+            # Initial Screen
+            response += "CON Welcome to Ushahidi USSD \n"
+            # Show all forms on Deployment
+            for i, form in enumerate(forms):
+                response += "{}. {} \n".format(i+1, form['name'])
+        
+        if step == 2:
+            # Next Screen 
+            form_choice = len(usrInput[-1])
+            fields = form_attributes(form_choice)
+            response += "CON Input Needed \n"
+            response += fields[0]
+            # @TODO Split Field into Screens and Store 'key': 'inputData'
+
+        return HttpResponse(response)
