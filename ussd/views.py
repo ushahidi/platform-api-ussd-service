@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .api import *
+from .models import Log
 
 # Webhook Listener
 @csrf_exempt
@@ -14,6 +15,8 @@ def index(request):
         text = request.POST.get('text')
         usrInput = text.split('*')
         step = len(usrInput)
+
+        Log.objects.create(phone_number=str(phone_number), text=str(text))
 
         response = ""
 

@@ -2,7 +2,7 @@ import os
 import json
 import requests
 
-PLATFORM_URL = str(os.environ.get('PLATFORM_URL', 'PLATFORM_URL NOT AVAILABLE'))
+PLATFORM_URL = os.environ.get('PLATFORM_URL', 'PLATFORM_URL NOT AVAILABLE')
 EMAIL = os.environ.get('PLATFORM_EMAIL', '')
 PASSWORD = os.environ.get('PLATFORM_PASSWORD', '')
 
@@ -15,7 +15,7 @@ token_payload = {
     'scope': '*',
     'grant_type': 'password'
 }
-token_url = "{}/oauth/token/".format(PLATFORM_URL)
+token_url = "https://ussd.api.ushahidi.io/oauth/token/"
 token = requests.request("POST", token_url, data=token_payload).text
 token = "Bearer {}".format(json.loads(str(token))['access_token'])
 
@@ -24,7 +24,7 @@ forms = []
 forms_header = {
     'Authorization': token
 }
-forms_url = "{}/api/v3/forms".format(PLATFORM_URL)
+forms_url = "https://ussd.api.ushahidi.io/api/v3/forms"
 response = requests.request("GET", forms_url, headers=forms_header).text
 response = json.loads(str(response))['results']
 for form in response:
@@ -38,7 +38,7 @@ def form_attributes(id):
     header = {
         'Authorization': token
     }
-    url = "{}/api/v3/forms/{}/attributes".format(PLATFORM_URL, id)
+    url = "https://ussd.api.ushahidi.io/api/v3/forms/{}/attributes".format(id)
     response = requests.request("GET", url, headers=forms_header).text
     response = json.loads(str(response))['results']
     for field in response:
