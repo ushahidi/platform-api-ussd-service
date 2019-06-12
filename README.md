@@ -16,12 +16,11 @@ PLATFORM_URL=https://ussd.ushahidi.io
 PLATFORM_EMAIL=admin@ushahidi.com
 PLATFORM_PASSWORD=*************
 ```
-- Install dependencies using: `pipenv install`
-- Migrate DB using: `python manage.py migrate`
-- Runserver using: `python manage.py runserver`
+- Install dependencies using: `pip install flask requests`
+- Runserver using: `FLASK_APP=app.py flask run`
 
 ## Technologies
 - Python 3.X
-- Django 2.1
-- PostgreSQL
+- Flask
+- MySQL
 - [Requests](https://2.python-requests.org/en/master/)
