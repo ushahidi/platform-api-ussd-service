@@ -17,7 +17,7 @@ PLATFORM_EMAIL=admin@ushahidi.com
 PLATFORM_PASSWORD=*************
 ```
 - Install dependencies using: `pip install -r requirements.txt`
-- Runserver using: `FLASK_APP=app.py flask run`
+- Runserver using: `python app.py`
 
 ## Technologies
 - Python 3.X
