@@ -16,7 +16,7 @@ PLATFORM_URL=https://ussd.ushahidi.io
 PLATFORM_EMAIL=admin@ushahidi.com
 PLATFORM_PASSWORD=*************
 ```
-- Install dependencies using: `pip install flask requests`
+- Install dependencies using: `pip install -r requirements.txt`
 - Runserver using: `FLASK_APP=app.py flask run`
 
 ## Technologies
