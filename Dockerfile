@@ -1,12 +1,8 @@
-FROM centos
-
-RUN rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
-      && yum update -y \
-      && yum install -y python-pip \
-      && pip install -r requirements.txt
-
-COPY . .
-
-EXPOSE 8080
-
-CMD python app.py
+FROM ubuntu:latest
+RUN apt-get update -y
+RUN apt-get install -y python-pip python-dev build-essential
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+ENTRYPOINT ["python"]
+CMD ["app.py"]
