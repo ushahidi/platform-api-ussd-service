@@ -1,6 +1,17 @@
 from flask import Flask, request
 from api import *
 
+## Sentry Integration
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+SENTRY_DSN = str(os.environ.get('DSN_CODE', ''))
+
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    integrations=[FlaskIntegration()]
+)
+
 app = Flask(__name__)
 
 @app.route('/ussd/', methods=['GET', 'POST'])
