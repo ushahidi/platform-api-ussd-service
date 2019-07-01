@@ -33,21 +33,32 @@ def ussd_handler():
         response = ""
 
         if step == 0:
-            # Initial Screen - Get Form
+            # Initial Screen - Get and Display Forms
             response += "CON Welcome to Ushahidi USSD! \n Kindly reply with form ID. \n"
             # Show all forms on Deployment                                                                                                                                                                                                                                                                  
             for i, form in enumerate(forms):
                 response += "{}. {} \n".format(i+1, form['name'])
         
-        if step == 1:
-            # Next Screen - Get & Display Form Fields
-            form_choice = int(usrInput[-1])  # Get the last entered value
+        if step >= 1:
+            # Next Screen - Get & Display Form Fields to be Inputted
+            form_choice = int(usrInput[0])  # Get the Form Choice
             form_id = forms[form_choice-1]['id'] # Get the actual form ID from Dict
             fields = form_attributes(form_id)
             response += "CON You'll be required to enter the following: \n"
             response += "\n".join([ field['label'] for field in fields])
-            response += "\nEnter any key to continue or cancel."
-        
+            response += "\nEnter 0 to continue or cancel."
+            
+            if step > 1:
+                index = step - 2
+
+                if len(fields) == index :
+                    response = "END Thanks for submitting your response."
+                    # @TODO: Send Fields Dict with Response back to API Function for Posting
+                else:
+                    response = "CON Enter Value for {} \n".format(fields[index]['label'])
+                    # @TODO: Attached Response to Fields Dicts.
+
+
         return response
 
 if __name__ == '__main__':
