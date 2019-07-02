@@ -11,7 +11,7 @@
 
 - Configure enviroment variables as follows:
 ```bash
-PLATFORM_URL=https://ussd.ushahidi.io
+PLATFORM_API=https://ussd.api.ushahidi.io #Ensure it is <deployment-url>.api.ushahidi.io
 PLATFORM_EMAIL=admin@ushahidi.com
 PLATFORM_PASSWORD=*************
 ```
