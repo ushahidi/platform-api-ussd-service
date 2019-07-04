@@ -1,6 +1,7 @@
 {
     "text": "Enter text",
     "textarea": "Enter longer text",
+    "location": "Enter Complete Address",
     "number": "Enter a number",
     "date": "Enter date e.g: 2019-12-31",
     "datetime": "Enter a datetime e.g: 2019-12-31 17:55",

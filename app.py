@@ -1,6 +1,10 @@
 from flask import Flask, request
-from api import * # Ushahidi API Requests Modul
-import json
+from api import *
+from utils import *
+import os
+
+# Get Ushahidi Deployment
+USHAHIDI_DEPLOYMENT = os.environ.get('PLATFORM_API', '').replace('.api', '')
 
 # Sentry Integration
 import sentry_sdk
@@ -15,11 +19,6 @@ sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=[FlaskIntegration()]
 )
-
-## Input Types for Help Texts
-input_types = None
-with open('input_types.json') as input_types:
-    input_types = json.load(input_types)
 
 @app.route('/ussd/', methods=['GET', 'POST'])
 # USSD Requests Handler
@@ -44,7 +43,8 @@ def ussd_handler():
 
         if step == 0:
             # Initial Screen - Get and Display Surveys/Forms
-            response += "CON Welcome to Ushahidi USSD! \n Kindly reply with form ID. \n"
+            response += "CON Welcome to Ushahidi USSD for {}! \n ".format(USHAHIDI_DEPLOYMENT)
+            response += "Kindly reply a Survey ID. \n"
             # Show all forms on Deployment                                                                                                                                                                                                                                                                  
             for i, form in enumerate(forms):
                 response += "{}. {} \n".format(i+1, form['name'])
@@ -71,10 +71,13 @@ def ussd_handler():
                     # @TODO: Send Fields Dict with Response back to API Function for Posting
                 else:
                     field = fields[index]
-                    response = "CON Enter Value for {} \n".format(field['label'])
-                    response += "\n Help text - {}".format(input_types[field['type']])
+                    label = field['label']
+                    help_text = get_help_text(field['type'])
+                    response = "CON Enter Value for {} \n".format(label)
+                    response += "\n Help text - {}".format(help_text)
                     # @TODO: Attached Response to Fields Dicts.
-
+                    # @TODO: Replace GeoCoded Location with Points
+                    # @TODO: Convert Date and Datetime to usable Formats
 
         return response
 
