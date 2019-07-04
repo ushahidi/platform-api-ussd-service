@@ -37,5 +37,5 @@ def form_attributes(id):
     response = requests.request("GET", url, headers=forms_header, params=querystring).text
     response = json.loads(str(response))['results']
     for field in response:
-        fields.append({"label": field['label'].upper(), "key": field['key']})
+        fields.append({"label": field['label'].upper(), "key": field['key'], "type": field['input']})
     return fields
