@@ -76,7 +76,6 @@ def ussd_handler():
                     response = "CON Enter Value for {} \n".format(label)
                     response += "\n Help text - {}".format(help_text)
                     # @TODO: Attached Response to Fields Dicts.
-                    # @TODO: Replace GeoCoded Location with Points
                     # @TODO: Convert Date and Datetime to usable Formats
 
         return response
