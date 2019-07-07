@@ -85,7 +85,7 @@ def post_ussd_responses(id, fields, ussd_responses):
                 selected_choice = ussd_responses[i].split(',') # Numbers from USSD e.g. 1,2
                 choice_values = []
                 for choice in selected_choice:
-                    choice = choice - 1 # Get Actual Index
+                    choice = int(choice) - 1 # Get Actual Index for Option
                     choice_values.append(fields[i]['options'][choice])
                 payload['values'][key] = choice_values
 
@@ -93,3 +93,4 @@ def post_ussd_responses(id, fields, ussd_responses):
     payload = json.dumps(payload)
     post_url = "{}/api/v3/posts".format(PLATFORM_API)
     requests.request("POST", post_url, data=payload, headers=forms_header)
+    print(payload)
