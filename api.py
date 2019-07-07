@@ -56,32 +56,40 @@ def post_ussd_responses(id, fields, ussd_responses):
         }
     }
     for i, field in enumerate(fields):
-        print(ussd_responses(i))
-        # Set Title & Content values
+        # Set Title & Content values to ussd_responses 0 and 1 respectively
         if i==0:
             payload['title'] = ussd_responses[i]
         elif i==1:
             payload['content'] = ussd_responses[i]
         else:
-            # Loop through fields, get the key and corresponding responses
+            # Loop through remaining fields, get the key and corresponding ussd_responses
             key = field['key']
-            payload['values'][key] = ussd_responses(i).split(',') # Convert response into Arrays
+            payload['values'][key] = ussd_responses[i].split(',') # Convert response into Array
+
             # Modify Special Fields - Override Response Values
+
             # Set Location Coordinates
             if (fields[i]['type'] == 'location'):
-                coordinates = get_location_coordinates(ussd_responses(i)) # Geocode User Location
+                coordinates = get_location_coordinates(ussd_responses[i]) # Geocode User Location
                 payload['values'][key] = {
                     'lat': coordinates[0],
                     'lon': coordinates[1]
                 }
             # Set Datetime values
-            if (fields[i]['type'] == 'date') or (fields[i]['type'] == 'datetime'):
-                datetime_string = ussd_responses(i)
+            elif (fields[i]['type'] == 'date') or (fields[i]['type'] == 'datetime'):
+                datetime_string = ussd_responses[i]
                 datetime_object =  datetime.fromisoformat(datetime_string).strftime('%Y-%m-%d %H:%M:%SZ')
-                payload['values'][key] = datetime_object
+                payload['values'][key] = datetime_object.split(',')
             # Set Actual Values from Multichoices
+            elif (fields[i]['type'] == 'select') or (fields[i]['type'] == 'radio') or (fields[i]['type'] == 'checkbox'):
+                selected_choice = ussd_responses[i].split(',') # Numbers from USSD e.g. 1,2
+                choice_values = []
+                for choice in selected_choice:
+                    choice = choice - 1 # Get Actual Index
+                    choice_values.append(fields[i]['options'][choice])
+                payload['values'][key] = choice_values
+
     # Make Post request to Submit data
     payload = json.dumps(payload)
     post_url = "{}/api/v3/posts".format(PLATFORM_API)
     requests.request("POST", post_url, data=payload, headers=forms_header)
-    print(payload)
