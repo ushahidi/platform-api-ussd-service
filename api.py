@@ -78,7 +78,7 @@ def post_ussd_responses(id, fields, ussd_responses):
             # Set Datetime values
             elif (fields[i]['type'] == 'date') or (fields[i]['type'] == 'datetime'):
                 datetime_string = ussd_responses[i]
-                datetime.strptime(datetime_string, '%Y-%m-%d').strftime('%Y-%m-%d %H:%M:%SZ')
+                datetime_object = datetime.strptime(datetime_string, '%Y-%m-%d').strftime('%Y-%m-%d %H:%M:%SZ')
                 payload['values'][key] = datetime_object.split(',')
             # Set Actual Values from Multichoices
             elif (fields[i]['type'] == 'select') or (fields[i]['type'] == 'radio') or (fields[i]['type'] == 'checkbox'):
