@@ -3,6 +3,7 @@ import json
 import requests
 from utils import *
 from datetime import datetime
+from requests.exceptions import HTTPError
 
 PLATFORM_API = os.environ.get('PLATFORM_API', '')
 EMAIL = os.environ.get('PLATFORM_EMAIL', '')
@@ -36,7 +37,14 @@ def form_attributes(id):
     fields = []
     url = "{}/api/v3/forms/{}/attributes".format(PLATFORM_API, id)
     querystring = {"order":"asc","orderby":"priority"}
-    response = requests.request("GET", url, headers=forms_header, params=querystring).text
+    response = None
+    try:
+        response = requests.request("GET", url, headers=forms_header, params=querystring).text
+        response.raise_for_status() # Raised only when there is error
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')
+    except Exception as err:
+        print(f'Other error occurred: {err}')
     response = json.loads(str(response))['results']
     for field in response:
         fields.append({"label": field['label'].upper(), "key": field['key'], "type": field['input'], "options": field['options']})
@@ -92,5 +100,12 @@ def post_ussd_responses(id, fields, ussd_responses):
     # Make Post request to Submit data
     payload = json.dumps(payload)
     post_url = "{}/api/v3/posts".format(PLATFORM_API)
-    requests.request("POST", post_url, data=payload, headers=forms_header)
-    print(payload)
+    try:
+        requests.request("POST", post_url, data=payload, headers=forms_header)
+    #     response.raise_for_status() # Raised only when there is error
+    # except HTTPError as http_err:
+    #     print(f'HTTP error occurred: {http_err}')
+    except Exception as err:
+        print(f'Other error occurred: {err}')
+    else:
+        print(payload)
