@@ -2,3 +2,4 @@ flask
 sentry-sdk[flask]
 requests
 gunicorn
+geopy
