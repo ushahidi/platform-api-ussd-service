@@ -1,6 +1,6 @@
 # Ushahidi Platform API USSD Service
 
-[Demo](https://ushahidi-ussd.herokuapp.com/)
+[Demo](https://drive.google.com/open?id=1-3LGJRNMH1Qi9ZAdconb3raRmPR4UzNE)
 
 ## Features
 - Fetches list of all Forms(Surveys on a Ushahi Platform) with PLATFORM_URL and Admin Credentials
