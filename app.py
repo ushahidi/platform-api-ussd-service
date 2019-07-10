@@ -47,15 +47,14 @@ def ussd_handler():
             response += "Kindly reply a Survey ID. \n"
             # Show all forms on Deployment                                                                                                                                                                                                                                                                  
             for i, form in enumerate(forms):
-                response += "{}. {} \n".format(i+1, form['name'])
+                response += "{}. {} \n".format(i+1, form['name']) # +1 is so we Surveys start counting from 1
         
         # Handles everyother screen on USSD
         elif step >= 1:
             # Screen 1 - Get and Display Fields for Selected Surveys
-            form_choice = int(usrInput[0])  # Get the Survey Choice
-            form_id = forms[form_choice-1]['id'] # Get the actual Survey ID from Dict
+            form_id = forms[int(usrInput[0])-1]['id'] # Get the actual Survey ID from Dict e.g. If 1 then ID=0
             fields = form_attributes(form_id) # **fields**
-            response += "CON You'll be required to enter the following: \n"
+            response += "CON The selected Survey has the following fields: \n"
             response += "\n".join([ field['label'] for field in fields])
             response += "\nEnter 0 to continue or cancel."
             
@@ -68,15 +67,20 @@ def ussd_handler():
                 # Check if we've exhausted **fields**
                 if len(fields) == index :
                     response = "END Thanks for submitting your response."
-                    # @TODO: Send Fields Dict with Response back to API Function for Posting
+                    # Call Function to post USSD reponses for Survey/Form fields input i.e. for screens > 2
+                    post_ussd_responses(form_id, fields, usrInput[2:])
                 else:
+                    # Get Values for Current Field
                     field = fields[index]
                     label = field['label']
+                    options = field['options']
                     help_text = get_help_text(field['type'])
                     response = "CON Enter Value for {} \n".format(label)
-                    response += "\n Help text - {}".format(help_text)
-                    # @TODO: Attached Response to Fields Dicts.
-                    # @TODO: Convert Date and Datetime to usable Formats
+                    response += "\n (Help text - {})".format(help_text)
+                    # Display field options if available
+                    if len(options)>1:
+                        for i, option in enumerate(options):
+                            response += "\n {} - {}".format(i+1, option)
 
         return response
 
