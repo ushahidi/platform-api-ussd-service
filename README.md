@@ -3,9 +3,9 @@
 [Demo](https://drive.google.com/open?id=1-3LGJRNMH1Qi9ZAdconb3raRmPR4UzNE)
 
 ## Features
-- Fetches list of all Forms(Surveys on a Ushahi Platform) with PLATFORM_URL and Admin Credentials
+- Fetches list of all Forms(Surveys on a Ushahi Platform) with PLATFORM_API and Admin Credentials
 - Provides Payload URL for USSD Provider e.g. Africa's Talking Webhook setup at *<service-url>/ussd/*
-- Manages the USSD Interaction *service* and *interactivity* with Ushahidi Deployment
+- Manages the USSD Interaction *service* and *interactivity* with PLATFORM_API Ushahidi Deployment
 
 ## How to Use
 
@@ -22,3 +22,4 @@ PLATFORM_PASSWORD=*************
 - Python 3.X
 - Flask
 - [Requests](https://2.python-requests.org/en/master/)
+- Geopy(https://geopy.readthedocs.io/) # Used in GeoCoding Address
