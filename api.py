@@ -79,10 +79,10 @@ def post_ussd_responses(id, fields, ussd_responses):
             # Set Location Coordinates
             if (fields[i]['type'] == 'location'):
                 coordinates = get_location_coordinates(ussd_responses[i]) # Geocode User Location
-                payload['values'][key] = {
+                payload['values'][key] = [{
                     'lat': coordinates[0],
                     'lon': coordinates[1]
-                }
+                }]
             # Set Datetime values
             elif (fields[i]['type'] == 'date') or (fields[i]['type'] == 'datetime'):
                 datetime_string = ussd_responses[i]
@@ -102,9 +102,9 @@ def post_ussd_responses(id, fields, ussd_responses):
     post_url = "{}/api/v3/posts".format(PLATFORM_API)
     try:
         requests.request("POST", post_url, data=payload, headers=forms_header)
-    #     response.raise_for_status() # Raised only when there is error
-    # except HTTPError as http_err:
-    #     print(f'HTTP error occurred: {http_err}')
+        response.raise_for_status() # Raised only when there is error
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')
     except Exception as err:
         print(f'Other error occurred: {err}')
     else:
