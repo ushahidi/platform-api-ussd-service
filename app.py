@@ -25,7 +25,9 @@ sentry_sdk.init(
 # CON - Response requiring Input
 # END - Response ending USSD Session                                                                                                                                                                                                                                                      
 def ussd_handler():
-    if request.method == 'POST':
+    if request.method == 'GET':
+        return "Hey there, I process majorly POST requests from Africa's Talking USSD"
+    elif request.method == 'POST':
         # Gets the POST Request Body
         request_data = request.form
         session_id = request_data['sessionId']
