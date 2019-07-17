@@ -20,7 +20,7 @@ sentry_sdk.init(
     integrations=[FlaskIntegration()]
 )
 
-@app.route('/ussd/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 # USSD Requests Handler
 # CON - Response requiring Input
 # END - Response ending USSD Session                                                                                                                                                                                                                                                      
