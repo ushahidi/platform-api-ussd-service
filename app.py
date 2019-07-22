@@ -5,6 +5,7 @@ import os
 
 # Get Ushahidi Deployment
 USHAHIDI_DEPLOYMENT = os.environ.get('PLATFORM_API', '').replace('.api', '')
+deployment_title = USHAHIDI_DEPLOYMENT.replace('https://', '').replace('.ushahidi.io', '')
 
 # Sentry Integration
 import sentry_sdk
@@ -45,7 +46,7 @@ def ussd_handler():
 
         if step == 0:
             # Initial Screen - Get and Display Surveys/Forms
-            response += "CON Welcome to Ushahidi USSD for {}! \n ".format(USHAHIDI_DEPLOYMENT)
+            response += "CON Welcome to Ushahidi USSD for {}! \n ".format(deployment_title)
             response += "Kindly reply a Survey ID. \n"
             # Show all forms on Deployment                                                                                                                                                                                                                                                                  
             for i, form in enumerate(forms):
