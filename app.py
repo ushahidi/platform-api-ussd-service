@@ -7,7 +7,7 @@ import os
 # Configure Redis
 redis_host = os.environ.get('REDIS_HOST', 'localhost')
 redis_port = os.environ.get('REDIS_PORT', 6379)
-redis_db = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
+redis_db = redis.StrictRedis(host=redis_host, port=redis_port, db=0, charset="utf-8", decode_responses=True)
 
 # Get Ushahidi Deployment
 USHAHIDI_DEPLOYMENT = os.environ.get('PLATFORM_API', '').replace('.api', '')
@@ -63,9 +63,11 @@ def ussd_handler():
             try:
                 # Screen 1 - Get and Display Fields for Selected Surveys
                 form_id = forms[int(usrInput[0])-1]['id'] # Get the actual Survey ID from Dict e.g. If 1 then ID=0
+                redis_db.set('valid_ussd_responses', form_id) # Save correct Form ID to Redis
             except Exception:
-                response = "CON Kindly reply with a correct Survey ID."
+                response = "CON Kindly reply with a valid Survey ID. e.g. 1"
             else:
+                form_id = redis_db.get('valid_ussd_responses')
                 fields = form_attributes(form_id) # **fields**
                 response += "CON The selected Survey has the following fields: \n"
                 response += "\n".join([ field['label'] for field in fields])
