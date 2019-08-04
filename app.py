@@ -91,9 +91,9 @@ def ussd_handler():
 
             # Handles Screens afer validStep==1 => User Input Screens based on **fields**
             # Override **response** for every Screen
-            if validStep > 1:
+            if validStep >= 1:
                 # Get actual fields index from Screen Step
-                index = step - 1
+                index = validStep - 1
 
                 # Check if we've exhausted **fields**
                 if len(fields) == index:
