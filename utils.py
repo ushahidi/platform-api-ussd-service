@@ -26,3 +26,10 @@ def get_location_coordinates(location):
         return [location.latitude, location.longitude]
     else:
         return []
+
+def validate_input(value, type):
+    # @TODO: Add Regex to check for inputs based on types
+    if value != "": # If input is valid and matches regex
+        return True
+    else:
+        return "Kindly input a correct value!"
