@@ -4,3 +4,4 @@ requests
 gunicorn
 geopy
 redis
+validators

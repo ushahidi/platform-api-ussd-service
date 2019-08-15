@@ -32,7 +32,6 @@ def ussd_handler():
         validInputStep = 0
         if redis_db.get(session_id) != None:
             validInputStep = len(redis_db.get(session_id))
-            validUserInput = db_retrieve(session_id)
 
         # Set Initial USSD Reponse
         response = ""
@@ -72,15 +71,18 @@ def ussd_handler():
             return response
 
         # Further USSD Interactions based on Survey
-        if validInputStep >= 1:
+        # Note that **validUerInput** has 2 entries: survery_id & fields
+        if validInputStep >= 2:
 
             """
                 Handles screens for Survey field responses
                 Overrides **response** for every new Screen
                 Gets the current field's index from ussdInputStep
             """
-            index = len(validUserInput) - 2  # Get current index
-
+            index = validInputStep - 2  # Get current index
+            validUserInput = db_retrieve(session_id)
+            
+            print(validUserInput)
             survey_id = int(validUserInput[0])  # Get survey ID
             fields = ast.literal_eval(validUserInput[1])  # Get survey fields
 

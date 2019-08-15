@@ -16,4 +16,4 @@ def db_save(session_id, data):
     redis_db.append(session_id, f"*{str(data)}")
 
 def db_retrieve(session_id):
-    return redis_db.get(session_id).split('*')
+    return redis_db.get(session_id).split('*').remove('')
