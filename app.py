@@ -28,10 +28,10 @@ def ussd_handler():
             ussdTextList.remove('')
         ussdInputStep = len(ussdTextList)
 
-        # If Redis DB is not empty, get steps and input
+        # If Redis DB is not empty, get steps
         validInputStep = 0
         if redis_db.get(session_id) != None:
-            validInputStep = len(redis_db.get(session_id))
+            validInputStep = len(db_retrieve(session_id))
 
         # Set Initial USSD Reponse
         response = ""
@@ -82,7 +82,6 @@ def ussd_handler():
             index = validInputStep - 2  # Get current index
             validUserInput = db_retrieve(session_id)
             
-            print(validUserInput)
             survey_id = int(validUserInput[0])  # Get survey ID
             fields = ast.literal_eval(validUserInput[1])  # Get survey fields
 
@@ -100,8 +99,11 @@ def ussd_handler():
                     for i, option in enumerate(options):
                         response += "\n {} - {}".format(i+1, option)
 
-            # Check for input's validity
             if (index >= 0):
+                """
+                    Check for input's validity for previous value (-1)
+                    Start checking after first value has been supplied
+                """
                 user_input = ussdTextList[-1]
                 field_type = fields[index-1]['type']
                 validity = validate_input(user_input, field_type)
@@ -129,6 +131,8 @@ def ussd_handler():
                 response = "END Thanks for submitting your response."
                 # Post USSD reponses for Survey fields input
                 post_ussd_responses(survey_id, fields, validUserInput[2:])
+                # Delete Redis key
+                db_delete(session_id)
 
             return response
 

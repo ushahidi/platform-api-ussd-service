@@ -16,4 +16,10 @@ def db_save(session_id, data):
     redis_db.append(session_id, f"*{str(data)}")
 
 def db_retrieve(session_id):
-    return redis_db.get(session_id).split('*').remove('')
+    response = redis_db.get(session_id).split('*')
+    while '' in response:
+        response.remove('')
+    return response
+
+def db_delete(session_id):
+    return redis_db.delete(session_id) # Deletes key from Redis
