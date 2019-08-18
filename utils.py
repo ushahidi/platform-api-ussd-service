@@ -1,4 +1,5 @@
 from geopy.geocoders import Nominatim
+import validators
 
 # Returns Help Texts for Input Tye
 def get_help_text(type):
@@ -26,3 +27,15 @@ def get_location_coordinates(location):
         return [location.latitude, location.longitude]
     else:
         return []
+
+def validate_input(value, type):
+    """ 
+        Check if input is valid using Validators
+        If valid, return True
+        Else, return error message
+
+    """
+    if validators.length(value, min=1) != "": # For all values
+        return True
+    else:
+        return "Kindly input a correct value!"

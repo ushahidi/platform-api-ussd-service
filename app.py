@@ -1,91 +1,141 @@
-from flask import Flask, request
 from api import *
 from utils import *
-import os
+from setup import *
+from store import *
 
-# Get Ushahidi Deployment
-USHAHIDI_DEPLOYMENT = os.environ.get('PLATFORM_API', '').replace('.api', '')
-deployment_title = USHAHIDI_DEPLOYMENT.replace('https://', '').replace('.ushahidi.io', '')
-
-# Sentry Integration
-import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
-
-# Initialize Flask App
-app = Flask(__name__)
-
-SENTRY_DSN = str(os.environ.get('DSN_CODE', ''))
-
-sentry_sdk.init(
-    dsn=SENTRY_DSN,
-    integrations=[FlaskIntegration()]
-)
 
 @app.route('/', methods=['GET', 'POST'])
-# USSD Requests Handler
-# CON - Response requiring Input
-# END - Response ending USSD Session                                                                                                                                                                                                                                                      
 def ussd_handler():
+    """
+        USSD Requests Handler, usage:
+        CON - Response requiring Input
+        END - Response ending USSD Session
+    """
+
     if request.method == 'GET':
         return "Hey there, I process majorly POST requests from Africa's Talking USSD"
+
     elif request.method == 'POST':
-        # Gets the POST Request Body
+        # Gets the POST Request Data
         request_data = request.form
         session_id = request_data['sessionId']
         service_code = request_data['serviceCode']
         phone_number = request_data['phoneNumber']
-        text = request_data['text']
-        usrInput = text.split('*')
-        # Removes '' from initial usrInput List
-        while '' in usrInput:
-            usrInput.remove('')
-        # Gets the current USSD Stage
-        step = len(usrInput)
+        ussdTextList = request_data['text'].split('*')
 
+        # Removes '' from list
+        while '' in ussdTextList:
+            ussdTextList.remove('')
+        ussdInputStep = len(ussdTextList)
+
+        # If Redis DB is not empty, get steps
+        validInputStep = 0
+        if redis_db.get(session_id) != None:
+            validInputStep = len(db_retrieve(session_id))
+
+        # Set Initial USSD Reponse
         response = ""
 
-        if step == 0:
-            # Initial Screen - Get and Display Surveys/Forms
-            response += "CON Welcome to Ushahidi USSD for {}! \n ".format(deployment_title)
-            response += "Kindly reply a Survey ID. \n"
-            # Show all forms on Deployment                                                                                                                                                                                                                                                                  
-            for i, form in enumerate(forms):
-                response += "{}. {} \n".format(i+1, form['name']) # +1 is so we Surveys start counting from 1
-        
-        # Handles everyother screen on USSD
-        elif step >= 1:
-            # Screen 1 - Get and Display Fields for Selected Surveys
-            form_id = forms[int(usrInput[0])-1]['id'] # Get the actual Survey ID from Dict e.g. If 1 then ID=0
-            fields = form_attributes(form_id) # **fields**
-            response += "CON The selected Survey has the following fields: \n"
-            response += "\n".join([ field['label'] for field in fields])
-            response += "\nEnter 0 to continue or cancel."
-            
-            # Handles Screens afer Screen 1 - User Input Screens based on **fields**
-            # Override **response** for every Screen
-            if step > 1:
-                # Get actual fields index from Screen Step
-                index = step - 2
-                
-                # Check if we've exhausted **fields**
-                if len(fields) == index :
-                    response = "END Thanks for submitting your response."
-                    # Call Function to post USSD reponses for Survey/Form fields input i.e. for screens > 2
-                    post_ussd_responses(form_id, fields, usrInput[2:])
+        # Initial USSD Screen - Get Survey Choice and save to DB
+        if (ussdInputStep >= 0) and (validInputStep == 0):
+
+            if ussdInputStep == 0:
+                # Initial Screen - Get and Display Surveys
+                response += "CON Welcome to Ushahidi USSD for {}! \n ".format(
+                    deployment_title)
+                response += "Kindly reply a Survey ID. \n"
+
+                # Show all surveys(forms) on deployment
+                for i, survey in enumerate(forms):
+                    # +1 is so we Surveys start counting from 1
+                    response += "{}. {} \n".format(i+1, survey['name'])
+
+            if ussdInputStep >= 1:
+                # Get and Display Fields for Selected Survey if valid
+                try:
+                    # Tries to get actual survey ID
+                    survey_id = forms[int(ussdTextList[-1])-1]['id']
+                except Exception:
+                    response = "CON Kindly reply with a valid Survey ID. e.g. 1"
                 else:
-                    # Get Values for Current Field
-                    field = fields[index]
+                    # Saves Survey ID and fields to redis DB
+                    fields = form_attributes(survey_id)
+                    response += "CON Survey has the following fields: \n"
+                    response += "\n".join([field['label'] for field in fields])
+                    response += "\nEnter 0 to continue or cancel."
+
+                    db_init(session_id)  # Initialize Redis DB
+                    db_save(session_id, survey_id)  # Save survey ID
+                    db_save(session_id, fields)  # Save survey fields
+
+            return response
+
+        # Further USSD Interactions based on Survey
+        # Note that **validUerInput** has 2 entries: survery_id & fields
+        if validInputStep >= 2:
+
+            """
+                Handles screens for Survey field responses
+                Overrides **response** for every new Screen
+                Gets the current field's index from ussdInputStep
+            """
+            index = validInputStep - 2  # Get current index
+            validUserInput = db_retrieve(session_id)
+            
+            survey_id = int(validUserInput[0])  # Get survey ID
+            fields = ast.literal_eval(validUserInput[1])  # Get survey fields
+
+            # Prompt user to input value
+            if index < len(fields):
+                field = fields[index]
+                label = field['label']
+                options = field['options']
+                help_text = get_help_text(field['type'])
+                response = "CON Enter value for {} \n".format(label)
+                response += "\n (Help text - {})".format(help_text)
+
+                # Display field options if available
+                if len(options) > 1:
+                    for i, option in enumerate(options):
+                        response += "\n {} - {}".format(i+1, option)
+
+            if (index >= 0):
+                """
+                    Check for input's validity for previous value (-1)
+                    Start checking after first value has been supplied
+                """
+                user_input = ussdTextList[-1]
+                field_type = fields[index-1]['type']
+                validity = validate_input(user_input, field_type)
+
+                if validity:
+                    """
+                        User input for field is valid based on type
+                        Save the input value to our DB - validUserInput
+                        User can now go to next screen with next survey field
+                    """
+                    db_save(session_id, user_input)
+
+                else:
+                    # Prompt user to re-input value
+                    field = fields[index-1]
                     label = field['label']
                     options = field['options']
                     help_text = get_help_text(field['type'])
-                    response = "CON Enter Value for {} \n".format(label)
+                    response = "CON You provided an incorrect input! \n Kindly re-enter a value for {} \n".format(
+                        label)
                     response += "\n (Help text - {})".format(help_text)
-                    # Display field options if available
-                    if len(options)>1:
-                        for i, option in enumerate(options):
-                            response += "\n {} - {}".format(i+1, option)
 
-        return response
+            # Check if we have exhausted Survey **fields**
+            if len(fields) == index:
+                response = "END Thanks for submitting your response."
+                # Post USSD reponses for Survey fields input
+                post_ussd_responses(survey_id, fields, validUserInput[2:])
+                # Delete Redis key
+                db_delete(session_id)
+
+            return response
+
 
 if __name__ == '__main__':
-    app.run(threaded=True,host='0.0.0.0',port=8080)
+    app.run(threaded=True, host='0.0.0.0', port=8080)

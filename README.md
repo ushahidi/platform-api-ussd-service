@@ -14,6 +14,9 @@
 PLATFORM_API=https://ussd.api.ushahidi.io #Ensure it is <deployment-url>.api.ushahidi.io
 PLATFORM_EMAIL=admin@ushahidi.com
 PLATFORM_PASSWORD=*************
+REDIS_HOST=localhost
+REDIS_PORT=6379
+DSN_CODE=https://***** # Flask integration URL from Sentry
 ```
 - Install dependencies using: `pip install -r requirements.txt`
 - Runserver using: `python app.py`

@@ -3,3 +3,5 @@ sentry-sdk[flask]
 requests
 gunicorn
 geopy
+redis
+validators
