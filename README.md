@@ -14,5 +14,3 @@ This documentation explains details about a service that allows for users to sen
 
 {% embed url="https://drive.google.com/open?id=1-3LGJRNMH1Qi9ZAdconb3raRmPR4UzNE" caption="Ushahidi Platform USSD Service Demo" %}
 
-{% page-ref page="features.md" %}
-

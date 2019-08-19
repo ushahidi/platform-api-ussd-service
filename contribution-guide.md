@@ -28,9 +28,10 @@ git checkout -b feat/new-feature
 
 * Create [Python Virtual Environment](https://docs.python.org/3/tutorial/venv.html)
 * [Install Redis](https://redis.io/topics/quickstart) \(Optional if using hosted Redis\)
+* [Configure environment variables](https://docs.ushahidi.com/platform-api-ussd-service/usage#configure-environment-variables)
 * Install dependencies using: `pip install -r requirements.txt`
 * Run server using: `python app.y`
-* Expose localhost \(for use by USSD Provider\)
+* Expose **localhost** \(for use by USSD Provider\)
 
 ## Report or Feature Request
 
