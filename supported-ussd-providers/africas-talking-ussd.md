@@ -11,5 +11,6 @@ This document explains how to setup Africa's Taking USSD with the Ushahidi Platf
 
 ![USSD Service Code - Africa Talking Sandbox](../.gitbook/assets/screenshot-from-2019-08-19-12-25-16.png)
 
-
+Africa's Talking allows you add a Callback URL for each USSD Service Code.  
+This basically is the URL of the USSD Service you have deployed or running locally \(while using Ngrok to expose your localhost\).
 

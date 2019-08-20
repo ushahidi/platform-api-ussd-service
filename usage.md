@@ -21,7 +21,8 @@ You would also need to deploy Redis server or use a managed one.
 
 ## Configure Environment Variables
 
-You are required to the following environment variables.
+You are required to have the following environment variables configured.  
+If you're running on your local PC, use this guide on [**How to Set Environment Variables.**](https://www.twilio.com/blog/2017/01/how-to-set-environment-variables.html)\*\*\*\*
 
 ```bash
 PLATFORM_API=https://ussd.api.ushahidi.io # Ushahidi deployment API URL

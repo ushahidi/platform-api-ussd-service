@@ -30,8 +30,8 @@ git checkout -b feat/new-feature
 * [Install Redis](https://redis.io/topics/quickstart) \(Optional if using hosted Redis\)
 * [Configure environment variables](https://docs.ushahidi.com/platform-api-ussd-service/usage#configure-environment-variables)
 * Install dependencies using: `pip install -r requirements.txt`
-* Run server using: `python app.y`
-* Expose **localhost** \(for use by USSD Provider\)
+* Run server using: `python app.py`
+* [Expose **localhost** using **Ngrok**](https://ngrok.com/) \(for use by USSD Provider\)
 
 ## Report or Feature Request
 
