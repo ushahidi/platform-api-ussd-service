@@ -16,3 +16,5 @@ This documentation explains details about a service that allows for users to sen
 
 _Source codes for the Ushahidi Platform API USSD Service is available_ [_here on GitHub._](https://github.com/ushahidi/platform-api-ussd-service)\_\_
 
+#### _You can read about_  [**My Google Summer of Code Experience \(GSoC\) with Ushahidi**](https://medium.com/studevs/my-google-summer-of-code-experience-gsoc-with-ushahidi-d314b634c6e1)\*\*\*\*
+
